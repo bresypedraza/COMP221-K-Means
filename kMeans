@@ -1,0 +1,95 @@
+import numpy as np
+from sklearn import datasets
+from matplotlib import pyplot as plt
+from numpy.linalg import norm
+import array
+
+# randomly chooses k desired number of clusters by taking an input k and a dataset
+def initialize(K, D):
+  m,n = np.shape(D)
+  centroids = np.empty((K, n))
+  for i in range(K):
+    centroids[i] = D[np.random.choice(range(m))]
+  return centroids
+
+# calculates the euclidean distance between two points
+def distance(x1, x2):
+  return np.linalg.norm(x1 - x2)
+
+# assigns data point to nearest centroid
+def chooseCentroid(x, C, K):
+  distances = np.empty(K)
+  for i in range(K):
+    distances[i] = distance(C[i], x)
+  return np.argmin(distances)
+
+def createClusters(C, K, D):
+  m, _ = np.shape(D)
+  cIndex = np.empty(m)
+  for i in range(m):
+    cIndex[i] = chooseCentroid(D[i], C, K)
+  return cIndex
+
+def findMean(cIndex, K, D):
+  _, n = np.shape(D)
+  C = np.empty((K, n))
+  for i in range(K):
+    points = D[cIndex == i]
+    C[i] = np.mean(points, axis=0)
+  return C
+
+def lloyds(K, D, maxT = 500, tol = 10e-14):
+  result = []
+  C = initialize(K, D)
+  print(f"initial centroids: {C}")
+  for _ in range(maxT):
+    clusters = createClusters(C, K, D)
+    prevC = C
+    C = findMean(clusters, K, D)
+    difference = prevC - C
+    if difference.all() < 0.05:
+      print(f"final centroids: {C}")
+      result.append(clusters)
+      result.append(C)
+      return result
+  return result
+
+def lloyds2(K, D, maxT = 500, tol = 10e-14):
+  result = []
+  C = initialize(K, D)
+  print(f"initial centroids: {C}")
+  for _ in range(maxT):
+    clusters = createClusters(C, K, D)
+    prevC = C
+    C = findMean(clusters, K, D)
+    difference = prevC - C
+    if difference.all() < 0.05:
+      print(f"final centroids: {C}")
+      result.append(clusters)
+      result.append(C)
+      return C
+  return C
+
+D, y = datasets.make_blobs()
+print(D[0])
+print(D[0][1])
+y_predictions = lloyds2(3, D)
+c1 = y_predictions[0]
+c2 = y_predictions[1]
+c3 = y_predictions[2]
+x1 = c1[0]
+y1 = c1[1]
+# x2 = c2[0]
+# y2 = c2[1]
+# x3 = c3[0]
+# y3 = c3[1]
+
+fig,ax = plt.subplots(1, 1, figsize=(10, 5))
+ax.set_title("Actual Clusters")
+plt.plot(x1, y1, marker="o", markersize=10, markeredgecolor="red", markerfacecolor="green")
+plt.show()
+
+D, y = datasets.make_blobs()
+y_predictions = lloyds(3, D)[0]
+print(y_predictions)
+
