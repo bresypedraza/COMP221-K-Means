@@ -93,3 +93,9 @@ D, y = datasets.make_blobs()
 y_predictions = lloyds(3, D)[0]
 print(y_predictions)
 
+fig,ax = plt.subplots(1, 1, figsize=(10, 5))
+ax.set_title("Actual Clusters")
+ax.scatter(D[:,0], D[:,1], c=y, cmap='viridis')
+plt.show()
+
+
