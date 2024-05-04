@@ -25,7 +25,7 @@ def chooseCentroid(x, C, K):
 
 # assigns data point to a cluster, which is defined by an index
 def createClusters(C, K, D):
-  m, _ = np.shape(D)
+  m = np.shape(D)[0]
   cIndex = np.empty(m)
   for i in range(m):
     cIndex[i] = chooseCentroid(D[i], C, K)
@@ -33,7 +33,7 @@ def createClusters(C, K, D):
 
 # calculates the mean of the data points in each cluster
 def findMean(cIndex, K, D):
-  _, n = np.shape(D)
+  n = np.shape(D)[1]
   C = np.empty((K, n))
   for i in range(K):
     points = D[cIndex == i]
